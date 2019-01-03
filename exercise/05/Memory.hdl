@@ -28,4 +28,15 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+    DMux4Way(in=load, sel=address[13..14], a=loadram1, b=loadram2, c=loadscreen, d=loadkbd);// 選A選B都沒差，選擇寫入
+	Or(a=loadram1, b=loadram2, out=loadram);// 程式輸出需要
+    RAM16K(in=in, load=loadram, address=address[0..13], out=ramout);// 從記憶體讀資料後輸出
+    Screen(in=in, load=loadscreen, address=address[0..12], out=scrout);// 螢幕變更
+    Keyboard(out=kbout);// 鍵盤輸出
+    Mux4Way16(a=ramout, b=ramout, c=scrout, d=kbout, sel=address[13..14], out=out);// 選擇一方輸出
 }
+// 0000 000 RAM start
+// 0011 FFF RAM end
+// 0100 000 Screen start
+// 0101 FFF Screen end
+// 0110 000 Keyboard
