@@ -17,4 +17,12 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+    Inc16(in=regout, out=plusone); // +1
+	Mux16(a=false, b=plusone, sel=inc, out=incout);// out(t) = out(t-1) + 1 
+	Mux16(a=incout, b=in, sel=load, out=loadout);// out(t) = in(t-1) 乘載
+	Mux16(a=loadout, b=false, sel=reset, out=toload);// out(t) = 0  清零
+	Or(a=load, b=reset, out=loadorreset);
+	Or(a=loadorreset, b=inc, out=loadflag);
+    Register(in=toload, load=loadflag, out=regout);//讀取上一刻的資料
+	Or16(a=regout, b=regout, out=out);// 程式碼輸出問題
 }
