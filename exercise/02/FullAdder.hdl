@@ -14,4 +14,8 @@ CHIP FullAdder {
 
     PARTS:
     // Put you code here:
+     HalfAdder(a=a, b=b, sum=HalfAdderab, carry=carryab);
+    HalfAdder(a=c, b=HalfAdderab, sum=allsum, carry=carryabc);
+    Or(a=carryab, b=carryabc, out=carry);
+    //ab+ac+bc(若任一元素重複因為定理，所以可以消去重複的)
 }
