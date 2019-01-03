@@ -42,5 +42,46 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no; // negate the out output?
+
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
+
+    PARTS:
    // Put you code here:
+
+    //all contral x
+    Mux16(a=x, b=false, sel=zx, out=zxout);//zx
+
+    Not16(in=zxout, out=notzx);//nx
+    Mux16(a=x, b=notzx, sel=nx, out=nxout);
+
+    //all contral y
+    Mux16(a=y, b=false, sel=zy, out=zyout);//zy
+   
+    Not16(in=zyout, out=notzy);//ny
+    Mux16(a=y, b=notzy, sel=ny, out=nyout);
+
+    Add16(a=nxout, b=nyout, out=addxyout);//f add
+    And16(a=nxout, b=nyout, out=andxyout);//f and
+    Mux16(a=andxyout, b=addxyout, sel=f, out=outputf);//f out
+
+    Or16Way(in=outputf, out=outnonzero);
+    Mux(a=true, b=false, sel=outnonzero, out=zr);   /* if out=0 then zr=1 else zr=0 */
+
+    IsNeg16(in=outputf, out=neg);
+    Mux(a=false, b=true, sel=neg, out=ng);          /* if out<0 then ng=1 else ng=0 */
+    
+    Or16(a=outputf, b=false, out=out);
+
 }
